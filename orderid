@@ -1,55 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job ID</title>
+    <title>Get All Task From Tookan</title>
 
-    <style>
-        h1,h2,h3,h4,h5,h6,p,label{
-            font-family: poppins;
-        }
-      
-    </style>
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- <script src="jquery-3.5.1.min.js"></script> -->
 </head>
-<body>
+<style>
+    h1,h2,h3,h4,h5,h6,p,label{
+        font-family: poppins;
+    }
+  
+    td {
+  text-align: center;
+}
 
+</style>
+<body>
     <div style="padding-top: 40px; padding-bottom: 40px;">
         <div class="container" style="background-color: white; text-align: center; padding-left: 30px; padding-right: 30px; border-radius: 10px;">
-
-            <h2 style="color:#c01f2e; text-align: center; margin-top: 20px; margin-bottom: 10px;">JOB<span style="color: #1a76ba;">ID</span></h2>
-
-            <div style="margin-top: 60px; margin-bottom: 20px; margin-left: 40px; margin-right: 40px;">
-                <div id="trackingnumberarea" style="text-align: center;">
-                    <label>Job ID:<br><input id="order_id" type="text" placeholder="BNXXXXXXX" style="border-radius: 5px; text-align:center;"></label>
-                    <br><br>
+     <h2 style="color:#c01f2e; text-align: center; margin-top: 20px; margin-bottom: 10px;">YOUR <span style="color: #1a76ba;">ORDERS</span></h2>
             
-                    <button id="trackbutton" style="padding-top: 9px; padding-left: 15px; padding-right: 15px; padding-bottom: 9px; border-radius: 5px; background-color: #3898ec; color: white; border: 0px;">Track</button>
-                </div>
-            
-                <div id="trackagain" style="display:none">
-                    <button id="trackbuttonagain" style="padding-top: 9px; padding-left: 15px; padding-right: 15px; padding-bottom: 9px; border-radius: 5px; background-color: #3898ec; color: white; border: 0px;">Track Again</button>
-                </div>
-            
-                <div id="loading" style="display:none">
-                    <h4>Please wait...</h4>
-                </div>
-            
-                <div id="wronginput" style="display:none">
-                    <h4 style="color: #b30000;">Please check the bru hims</h4>
-                </div>
+     
+     <div style="margin-top: 60px; margin-bottom: 20px; margin-left: 40px; margin-right: 40px;">
+        <div id="trackingnumberarea" style="text-align: center;">
+            <label>ORDERS:<br><input id="order_id" type="text" placeholder="BNXXXXXXX" style="border-radius: 5px; text-align:center;"></label>
+            <br><br>
 
-                <div id="jobresultbox" style="display:none">
-                    <div style="text-align: center;">
-                        <h3>ORDER ID</h3><br>
-                            <p><b>JOB ID</b><span id="jobid"></span></p>
-                    </div>
+            <button id="trackbutton" style="padding-top: 9px; padding-left: 15px; padding-right: 15px; padding-bottom: 9px; border-radius: 5px; background-color: #3898ec; color: white; border: 0px;">FIND ORDERS</button>
+        </div>
 
-<script>
+        <div id="trackagain" style="display:none">
+            <button onClick="window.location.reload();" id="trackbuttonagain" style="padding-top: 9px; padding-left: 15px; padding-right: 15px; padding-bottom: 9px; border-radius: 5px; background-color: #3898ec; color: white; border: 0px;">FIND AGAIN</button>
+        </div>
+     
+        <div id="loading" style="display:none">
+            <h4>Please wait...</h4>
+        </div>
+    
+        <div id="wronginput" style="display:none">
+            <h4 style="color: #b30000;">Please check the Order</h4>
+        </div>
 
- document.addEventListener("DOMContentLoaded", function(event) {
+   
+
+    <div id="tasklist" style="text-align: center; margin-left: 50px; margin-right: 50px;">
+
+    </div><BR>
+
+    <a href="https://www.gorushbn.com/pharmacy-tracking" target="_blank"><button>MORE TRACKING DETAILS</button></a>
+    <script>
+document.addEventListener("DOMContentLoaded", function(event) {
    document.getElementById("trackbutton").addEventListener("click", tracknumber);
                         
 function tracknumber(){
@@ -64,9 +69,12 @@ var responsejd = '';
 
         var request = new XMLHttpRequest();
 
-        document.getElementById("jobresultbox").style.display = 'none';
-        document.getElementById("wronginput").style.display = 'none';
-        document.getElementById("loading").style.display = 'inline';
+
+        var countnumtask = 0;
+        var responsegat = '';
+        var json_responsegat = '';
+
+        var request = new XMLHttpRequest();
 
         request.open('POST', 'https://api.tookanapp.com/v2/get_job_details_by_order_id');
 
@@ -77,49 +85,155 @@ var responsejd = '';
                 console.log('Status:', this.status);
                 console.log('Headers:', this.getAllResponseHeaders());
                 console.log('Body:', this.responseText);
-                responsejd = this.responseText;
-                json_responsejd = JSON.parse(responsejd);
+                responsegat = this.responseText;
+                json_responsegat = JSON.parse(responsegat);
 
-                if(json_responsejd.status != 404){
-                    document.getElementById("loading").style.display = 'none';
+                let table = document.createElement('table');
+                table.setAttribute("id", "tasklisttable");
+                table.className = "table table-striped table-hover table-bordered table-responsive";
+                table.style="margin-left:auto; margin-right:auto;"
+                let thead = document.createElement('thead');
+                let tbody = document.createElement('tbody');
 
-                    document.getElementById("jobresultbox").style.display = 'block';
+                table.appendChild(thead);
+                table.appendChild(tbody);
+
+                document.getElementById('tasklist').appendChild(table);
+
+                // Creating and adding data to first row of the table
+                let row_1 = document.createElement('tr');
+                let heading_1 = document.createElement('th');
+                heading_1.innerHTML = "Tracking Numbers";
+                let heading_2 = document.createElement('th');
+                heading_2.innerHTML = "Order Date";
+                let heading_3 = document.createElement('th');
+                heading_3.innerHTML = "Status";
+                
+               
+
+                row_1.appendChild(heading_1);
+                row_1.appendChild(heading_2);
+                row_1.appendChild(heading_3);
+                thead.appendChild(row_1);
+
+                countnumtask = json_responsegat.data["length"];
+
+                for (let i = 0; i < countnumtask; i++) {
+
+                    var today = new Date(json_responsegat.data[i].creation_datetime);
+var date = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear();
+
+var ampm = '';
+var ampmhour = '';
+var ampmmin = '';
+
+if (today.getHours() < 12) {
+	ampm = 'am';
+	ampmhour = (today.getHours());
+}
+
+if (today.getHours() == 12) {
+	ampm = 'pm';
+	ampmhour = (today.getHours());
+}
+
+if (today.getHours() > 12) {
+	ampm = 'pm';
+	ampmhour = (today.getHours() - 12);
+}
+
+if (today.getMinutes() < 10) {
+	ampmmin = "0" + (today.getMinutes());
+}
+
+if (today.getMinutes() >= 10) {
+	ampmmin = (today.getMinutes());
+}
+var time = ampmhour + ":" + ampmmin + " " + ampm;
+
+var dateTime = date + ' ' + time;
+
+if (json_responsegat.data[i].job_status == 2){
+    var statusJob = "Success";
+}
+
+if (json_responsegat.data[i].job_status == 3){
+    var statusJob = "Failed";
+}
+
+if (json_responsegat.data[i].job_status == 0){
+    var statusJob = "Processing";
+}
+
+if (json_responsegat.data[i].job_status == 1){
+    var statusJob = "Out for Delivery";
+}
+
+if (json_responsegat.data[i].job_status == 4){
+    var statusJob = "Processing";
+}
+
+if (json_responsegat.data[i].job_status == 6){
+    var statusJob = "Processing";
+}
+
+if (json_responsegat.data[i].job_status == 7){
+    var statusJob = "Processing";
+}
+
+if (json_responsegat.data[i].job_status == 8){
+    var statusJob = "Processing";
+}
+
+if (json_responsegat.data[i].job_status == 9){
+    var statusJob = "Processing";
+}
 
 
-                    document.getElementById("jobid").innerHTML = json_responsejd.data[0].job_id;
 
-                    document.getElementById("trackagain").style.display = 'block';
+                    let row_2 = document.createElement('tr');
+                    let row_2_data_1 = document.createElement('td');
+                    row_2_data_1.innerHTML = json_responsegat.data[i].job_id;
+                    let row_2_data_2 = document.createElement('td');
+                    row_2_data_2.innerHTML = dateTime;
+                    let row_2_data_3 = document.createElement('td');
+                    row_2_data_3.innerHTML = statusJob;
+               
+                    row_2.appendChild(row_2_data_1);
+                    row_2.appendChild(row_2_data_2);
+                    row_2.appendChild(row_2_data_3);
+                    tbody.appendChild(row_2);
 
-                    document.getElementById("trackbuttonagain").addEventListener("click", function(){
+                    
+
+                }
+            }
+        };
+
+        document.getElementById("trackagain").style.display = 'block';
+        document.getElementById("trackbuttonagain").addEventListener("click", function(){
                         document.getElementById("trackagain").style.display = 'none';
                         document.getElementById("trackingnumberarea").style.display = 'block';
                         document.getElementById("jobresultbox").style.display = 'none';
                     });
 
-                }
 
-                if (json_responsejd.status == 404){
-                    document.getElementById("loading").style.display = 'none';
-                    document.getElementById("wronginput").style.display = 'block';
-                    document.getElementById("trackingnumberarea").style.display = 'block';
-                }
-                }
-            };
-
-            var body = {
+        var body = {
             'api_key': '51676580f24b091114132d38111925401ee4c2f328d978375e1f03',
-            'order_id': orderid,
-            'include_task_history': 1
-        };
+            'order_ids': [orderid],
+            'include_task_history': 1     
+        }
 
         request.send(JSON.stringify(body));
-        
-    }
-});
-
-      //+6737178007
+    }})
     </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+
+
+
+
 </body>
+
 </html>
-
-
